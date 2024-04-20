@@ -1,74 +1,52 @@
+#include <iostream>
+#include <template_arg.hpp>
+#include <typeinfo>
+#include <vector>
 
-#include<iostream>
-#include<template_is_prime.hpp>
-#include<SFINAE.hpp>
-#include<if_constexp.hpp>
-#include<vector>
-#include<SignalSlot.hpp>
+#define PRINT_FUN(test) \
+    { std::cout << test << std::endl; }
 
-template<typename T, T Z = T{}>
-class RefMem {
-private:
-    T zero;
-    public:
-    RefMem() : zero{Z}
-    {
-    }
+// 示例类，不包含foo成员函数
+struct test01 {
+    typedef int X;
 };
-int null = 0;
-int main(int argc, char** argv){
-#if USE_constexpr
-    constexpr unsigned test_number = 17;
-    std::cout << "template test !" << std::endl;
-    if (template_is_prime<test_number>::value) {
-        std::cout << test_number << " is a prime number.\n";
-    } else {
-        std::cout << test_number << " is not a prime number.\n";
-    }
-#endif
-#if SFINAE
-    int arr[10];
-    std::cout << len(arr) << std::endl;
-    std::cout << len("arr") << std::endl;
-    const std::vector<int> v;
-    std::cout << len(v) << std::endl;
 
-    int* p;
-    std::cout << len(p) << std::endl;
-    class a {
-    public:
-        int size(){return 10;};
-    };
-    a c;
-    std::cout << c.size() << "" << len(c) << std::endl;
-    // ! 为什么这个直接匹配了省略号？？？
+int b = 10;
+struct test02 {
+    char y;
+};
+int main(int argc, char **argv) {
+    PRINT_FUN("hello world!");
+    PRINT_FUN(testTemplate::max<int>(10, 20));
+    PRINT_FUN(testTemplate::max(10, 20));
+    PRINT_FUN(testTemplate::max(10.0, 20.0));
+    // PRINT_FUN(testTemplate::implcit_cast<double>(100));
+    std::cout << testTemplate::implcit_cast<double, bool>(100) << std::endl;
+    //   test01 test1;
+    //   test02 test2;
+    const int *a;
+    PRINT_FUN(sizeof(test01::X))
+    PRINT_FUN(sizeof(testTemplate::test<test01>(a)));
+    PRINT_FUN(sizeof(testTemplate::test<test02>(a)));
 
-    std::allocator<int> x;
-    std::cout << len(x) << std::endl;
+    PRINT_FUN(testTemplate::g<1>());
 
-#endif
+    testTemplate::A<int> t;
+    PRINT_FUN(t.size());
+    t.push(10);
+    t.push(10);
+    PRINT_FUN(t.size());
 
-    // print("21321");
-    // print("rwerew","asfsd");
-    // 创建信号
-    Signal<int> mySignal;
+    testTemplate::C<int, 10> *C1;
+    // int b = 10;
+    testTemplate::C<int *, &b> *C2;
 
-    // 绑定槽函数
-    mySignal.connect(mySlot);
+    testTemplate::C<void (*)(int), testTemplate::f> *C3; // 匹配f(int)
+    testTemplate::C<void (*)(), testTemplate::f> *C4;    // 匹配f()
 
-    // 触发信号
-    mySignal.emit(42);
+    testTemplate::C<int &, testTemplate::X::c> *C5;
+    testTemplate::C<int testTemplate::X::*, &testTemplate::X::a> *C6;
 
-
-
-
-
-    RefMem<int> rm1, rm2;
-    rm1 = rm2; // OK
-    // RefMem<int&> rm3; // ERROR: invalid default value for N
-    // RefMem<int&, 0> rm4; // ERROR: invalid default value for N extern int null;
-    RefMem<int&,null> rm5, rm6;
-    // rm5 = rm6; // ERROR: operator= is deleted due to reference member
-
+    testTemplate::C<void (*)(), &testTemplate::templ_func<double>> *C7;
     return 0;
 }

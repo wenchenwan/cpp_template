@@ -45,6 +45,10 @@
         "map": "cpp",
         "memory_resource": "cpp",
         "random": "cpp",
-        "string": "cpp"
-    }
+        "string": "cpp",
+        "fstream": "cpp",
+        "optional": "cpp",
+        "chrono": "cpp",
+        "bitset": "cpp"
+}
 }
