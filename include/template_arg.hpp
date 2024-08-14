@@ -1,7 +1,6 @@
 /**
  * template argument test
  **/
-
 #include <queue>
 namespace testTemplate {
 template <typename T>
